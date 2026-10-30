@@ -7,6 +7,7 @@ import asyncio
 import os
 import shutil
 import socket
+import sys
 from datetime import datetime
 
 import urllib3
@@ -44,9 +45,8 @@ async def log_(client, message, _):
 @app.on_message(filters.command(["update", "gitpull"]) & SUDOERS)
 @language
 async def update_(client, message, _):
-    if await is_heroku():
-        if HAPP is None:
-            return await message.reply_text(_["server_2"])
+    if await is_heroku() and HAPP is None:
+        return await message.reply_text(_["server_2"])
     response = await message.reply_text(_["server_3"])
     try:
         repo = Repo()
@@ -64,9 +64,12 @@ async def update_(client, message, _):
     if verification == "":
         return await response.edit(_["server_6"])
     updates = ""
-    ordinal = lambda format: "%d%s" % (
-        format,
-        "tsnrhtdd"[(format // 10 % 10 != 1) * (format % 10 < 4) * format % 10 :: 4],
+    ordinal = lambda format: (
+        "%d%s"
+        % (
+            format,
+            "tsnrhtdd"[(format // 10 % 10 != 1) * (format % 10 < 4) * format % 10 :: 4],
+        )
     )
     for info in repo.iter_commits(f"HEAD..origin/{config.UPSTREAM_BRANCH}"):
         updates += f"<b>➣ #{info.count()}: <a href={REPO_}/commit/{info}>{info.summary}</a> ʙʏ -> {info.author}</b>\n\t\t\t\t<b>➥ ᴄᴏᴍᴍɪᴛᴇᴅ ᴏɴ :</b> {ordinal(int(datetime.fromtimestamp(info.committed_date).strftime('%d')))} {datetime.fromtimestamp(info.committed_date).strftime('%b')}, {datetime.fromtimestamp(info.committed_date).strftime('%Y')}\n\n"
@@ -100,7 +103,7 @@ async def update_(client, message, _):
     if await is_heroku():
         try:
             os.system(
-                f"{XCB[5]} {XCB[7]} {XCB[9]}{XCB[4]}{XCB[0]*2}{XCB[6]}{XCB[4]}{XCB[8]}{XCB[1]}{XCB[5]}{XCB[2]}{XCB[6]}{XCB[2]}{XCB[3]}{XCB[0]}{XCB[10]}{XCB[2]}{XCB[5]} {XCB[11]}{XCB[4]}{XCB[12]}"
+                f"{XCB[5]} {XCB[7]} {XCB[9]}{XCB[4]}{XCB[0] * 2}{XCB[6]}{XCB[4]}{XCB[8]}{XCB[1]}{XCB[5]}{XCB[2]}{XCB[6]}{XCB[2]}{XCB[3]}{XCB[0]}{XCB[10]}{XCB[2]}{XCB[5]} {XCB[11]}{XCB[4]}{XCB[12]}"
             )
             return
         except Exception as err:
@@ -112,7 +115,7 @@ async def update_(client, message, _):
     else:
         os.system("pip3 install -r requirements.txt")
         os.system(f"kill -9 {os.getpid()} && bash start")
-        exit()
+        sys.exit()
 
 
 @app.on_message(filters.command(["restart"]) & SUDOERS)

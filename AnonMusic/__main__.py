@@ -5,6 +5,7 @@
 
 import asyncio
 import importlib
+import sys
 
 from pyrogram import idle
 from pytgcalls.exceptions import NoActiveGroupCall
@@ -27,7 +28,7 @@ async def init():
         and not config.STRING5
     ):
         LOGGER(__name__).error("Assistant client variables not defined, exiting...")
-        exit()
+        sys.exit()
     await sudo()
     try:
         users = await get_gbanned()
@@ -48,9 +49,9 @@ async def init():
         await Anony.stream_call("https://te.legra.ph/file/29f784eb49d230ab62e9e.mp4")
     except NoActiveGroupCall:
         LOGGER("AnonMusic").error(
-            "Please turn on the videochat of your log group\channel.\n\nStopping Bot..."
+            "Please turn on the videochat of your log group\\channel.\n\nStopping Bot..."
         )
-        exit()
+        sys.exit()
     except:
         pass
     await Anony.decorators()

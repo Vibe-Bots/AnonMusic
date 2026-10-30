@@ -2,14 +2,14 @@
 # Open-sourced under MIT terms.
 # Included within AnonMusic framework.
 
-import time
 import asyncio
+import time
 
 from pyrogram import filters
 from pyrogram.enums import ChatType
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
-from pyrogram.errors.exceptions.not_acceptable_406 import ChannelPrivate
 from pyrogram.errors.exceptions.flood_420 import SlowmodeWait
+from pyrogram.errors.exceptions.not_acceptable_406 import ChannelPrivate
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 
 import config
 from AnonMusic import app
@@ -35,10 +35,10 @@ from strings import get_string
 async def start_pm(client, message: Message, _):
     await add_served_user(message.from_user.id)
     args = message.text.split()
-    
+
     if len(args) > 1:
         name = args[1]
-        
+
         if name.startswith("help"):
             keyboard = help_pannel(_)
             return await message.reply_photo(
@@ -46,23 +46,23 @@ async def start_pm(client, message: Message, _):
                 caption=_["help_1"].format(config.SUPPORT_CHAT),
                 reply_markup=keyboard,
             )
-        
+
         if name.startswith("sud"):
             await sudoers_list(client=client, message=message, _=_)
             if await is_on_off(2):
                 await app.send_message(
                     LOGGER_ID,
                     f"{message.from_user.mention} checked sudolist.\n"
-                    f"ID: `{message.from_user.id}`\nUsername: @{message.from_user.username}"
+                    f"ID: `{message.from_user.id}`\nUsername: @{message.from_user.username}",
                 )
             return
-        
+
         if name.startswith("inf"):
             m = await message.reply_text("💻")
             video_id = name.replace("info_", "", 1)
             await show_track_info(message, video_id, _, m)
             return
-    
+
     out = private_panel(_)
     await message.reply_photo(
         photo=START_IMG_URL,
@@ -73,16 +73,16 @@ async def start_pm(client, message: Message, _):
         await app.send_message(
             LOGGER_ID,
             f"{message.from_user.mention} started the bot.\n"
-            f"ID: `{message.from_user.id}`\nUsername: @{message.from_user.username}"
+            f"ID: `{message.from_user.id}`\nUsername: @{message.from_user.username}",
         )
 
 
 async def show_track_info(message, video_id, _, loading_msg):
     from py_yt import VideosSearch
-    
+
     query = f"https://www.youtube.com/watch?v={video_id}"
     results = VideosSearch(query, limit=1)
-    
+
     for result in (await results.next())["result"]:
         title = result["title"]
         duration = result["duration"]
@@ -92,18 +92,20 @@ async def show_track_info(message, video_id, _, loading_msg):
         channel = result["channel"]["name"]
         video_link = result["link"]
         published = result["publishedTime"]
-    
+
     searched_text = _["start_6"].format(
         title, duration, views, published, channel_link, channel, app.mention
     )
-    
-    keyboard = InlineKeyboardMarkup([
+
+    keyboard = InlineKeyboardMarkup(
         [
-            InlineKeyboardButton(text=_["S_B_8"], url=video_link),
-            InlineKeyboardButton(text=_["S_B_9"], url=config.SUPPORT_CHAT),
+            [
+                InlineKeyboardButton(text=_["S_B_8"], url=video_link),
+                InlineKeyboardButton(text=_["S_B_9"], url=config.SUPPORT_CHAT),
+            ]
         ]
-    ])
-    
+    )
+
     await loading_msg.delete()
     await app.send_photo(
         chat_id=message.chat.id,
@@ -118,7 +120,7 @@ async def show_track_info(message, video_id, _, loading_msg):
 async def start_gp(client, message: Message, _):
     out = start_panel(_)
     uptime = get_readable_time(int(time.time() - _boot_))
-    
+
     for attempt in range(2):
         try:
             await message.reply_photo(
@@ -148,17 +150,17 @@ async def welcome(client, message: Message):
             except:
                 pass
             continue
-        
+
         if member.id != app.id:
             continue
-        
+
         language = await get_lang(message.chat.id)
         _ = get_string(language)
-        
+
         if message.chat.type != ChatType.SUPERGROUP:
             await message.reply_text(_["start_4"])
             return await app.leave_chat(message.chat.id)
-        
+
         if message.chat.id in await blacklisted_chats():
             await message.reply_text(
                 _["start_5"].format(
@@ -169,7 +171,7 @@ async def welcome(client, message: Message):
                 disable_web_page_preview=True,
             )
             return await app.leave_chat(message.chat.id)
-        
+
         out = start_panel(_)
         await message.reply_photo(
             photo=START_IMG_URL,

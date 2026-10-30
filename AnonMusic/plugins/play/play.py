@@ -80,7 +80,7 @@ async def play_commnd(
     if audio_telegram:
         if audio_telegram.file_size > 104857600:
             return await mystic.edit_text(_["play_5"])
-        duration_min = seconds_to_min(audio_telegram.duration)
+        seconds_to_min(audio_telegram.duration)
         if (audio_telegram.duration) > config.DURATION_LIMIT:
             return await mystic.edit_text(
                 _["play_6"].format(config.DURATION_LIMIT_MIN, app.mention)
@@ -267,7 +267,7 @@ async def play_commnd(
             cap = _["play_10"].format(details["title"], details["duration_min"])
         elif await SoundCloud.valid(url):
             try:
-                details, track_path = await SoundCloud.download(url)
+                details, _track_path = await SoundCloud.download(url)
             except:
                 return await mystic.edit_text(_["play_3"])
             duration_sec = details["duration_sec"]
@@ -427,7 +427,7 @@ async def play_commnd(
                     ),
                     reply_markup=InlineKeyboardMarkup(buttons),
                 )
-                return await play_logs(message, streamtype=f"Searched on Youtube")
+                return await play_logs(message, streamtype="Searched on Youtube")
             else:
                 buttons = track_markup(
                     _,
@@ -442,7 +442,7 @@ async def play_commnd(
                     caption=cap,
                     reply_markup=InlineKeyboardMarkup(buttons),
                 )
-                return await play_logs(message, streamtype=f"URL Searched Inline")
+                return await play_logs(message, streamtype="URL Searched Inline")
 
 
 @app.on_callback_query(filters.regex("MusicStream") & ~BANNED_USERS)
@@ -584,12 +584,12 @@ async def play_playlists_command(client, CallbackQuery, _):
             return await mystic.edit_text(_["play_3"])
     if ptype == "spartist":
         try:
-            result, spotify_id = await Spotify.artist(videoid)
+            result, _spotify_id = await Spotify.artist(videoid)
         except:
             return await mystic.edit_text(_["play_3"])
     if ptype == "apple":
         try:
-            result, apple_id = await Apple.playlist(videoid, True)
+            result, _apple_id = await Apple.playlist(videoid, True)
         except:
             return await mystic.edit_text(_["play_3"])
     try:

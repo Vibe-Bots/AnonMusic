@@ -20,7 +20,9 @@ from AnonMusic.utils.database import (
 async def active_vc(_, message: Message):
     achats = len(await get_active_chats())
     vchats = len(await get_active_video_chats())
-    await message.reply_text(f"<b>» ᴀᴄᴛɪᴠᴇ ᴠᴏɪᴄᴇ ᴄʜᴀᴛs:</b>\n\nᴠᴏɪᴄᴇ: {achats}\nᴠɪᴅᴇᴏ: {vchats}")
+    await message.reply_text(
+        f"<b>» ᴀᴄᴛɪᴠᴇ ᴠᴏɪᴄᴇ ᴄʜᴀᴛs:</b>\n\nᴠᴏɪᴄᴇ: {achats}\nᴠɪᴅᴇᴏ: {vchats}"
+    )
 
 
 @app.on_message(filters.command(["activevc", "activevoice"]) & SUDOERS)
@@ -41,9 +43,7 @@ async def activevc(_, message: Message):
                 user = chat.username
                 text += f"<b>{j + 1}.</b> <a href=https://t.me/{user}>{title}</a> [<code>{x}</code>]\n"
             else:
-                text += (
-                    f"<b>{j + 1}.</b> {title} [<code>{x}</code>]\n"
-                )
+                text += f"<b>{j + 1}.</b> {title} [<code>{x}</code>]\n"
             j += 1
         except:
             continue
@@ -74,9 +74,7 @@ async def activevi_(_, message: Message):
                 user = chat.username
                 text += f"<b>{j + 1}.</b> <a href=https://t.me/{user}>{title}</a> [<code>{x}</code>]\n"
             else:
-                text += (
-                    f"<b>{j + 1}.</b> {title} [<code>{x}</code>]\n"
-                )
+                text += f"<b>{j + 1}.</b> {title} [<code>{x}</code>]\n"
             j += 1
         except:
             continue

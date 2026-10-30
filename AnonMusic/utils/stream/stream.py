@@ -5,7 +5,6 @@
 
 import os
 from random import randint
-from typing import Union
 
 from pyrogram.types import InlineKeyboardMarkup
 
@@ -29,17 +28,16 @@ async def stream(
     chat_id,
     user_name,
     original_chat_id,
-    video: Union[bool, str] = None,
-    streamtype: Union[bool, str] = None,
-    spotify: Union[bool, str] = None,
-    forceplay: Union[bool, str] = None,
+    video: bool | str | None = None,
+    streamtype: bool | str | None = None,
+    spotify: bool | str | None = None,
+    forceplay: bool | str | None = None,
 ):
     if not result:
         return
 
     if forceplay:
         await Anony.force_stop_stream(chat_id)
-
 
     if streamtype == "playlist":
         msg = f"{_['play_19']}\n\n"
@@ -54,7 +52,7 @@ async def stream(
                     duration_sec,
                     thumbnail,
                     vidid,
-                ) = await YouTube.details(search, False if spotify else True)
+                ) = await YouTube.details(search, not spotify)
             except:
                 continue
 
@@ -90,7 +88,7 @@ async def stream(
                     )
                 except:
                     raise AssistantErr(_["play_14"])
-                
+
                 if not file_path:
                     raise AssistantErr(_["play_14"])
 
@@ -155,10 +153,11 @@ async def stream(
         thumbnail = result["thumb"]
         status = True if video else None
 
-
         current_queue = db.get(chat_id)
         if current_queue is not None and len(current_queue) >= 10:
-             return await app.send_message(original_chat_id, "ʏᴏᴜ ᴄᴀɴ'ᴛ ᴀᴅᴅ ᴍᴏʀᴇ ᴛʜᴀɴ 10 sᴏɴɢs ᴛᴏ ᴛʜᴇ ǫᴜᴇᴜᴇ.")
+            return await app.send_message(
+                original_chat_id, "ʏᴏᴜ ᴄᴀɴ'ᴛ ᴀᴅᴅ ᴍᴏʀᴇ ᴛʜᴀɴ 10 sᴏɴɢs ᴛᴏ ᴛʜᴇ ǫᴜᴇᴜᴇ."
+            )
 
         try:
             file_path, direct = await YouTube.download(
@@ -166,9 +165,9 @@ async def stream(
             )
         except:
             raise AssistantErr(_["play_14"])
-        
+
         if not file_path:
-             raise AssistantErr(_["play_14"])
+            raise AssistantErr(_["play_14"])
 
         if await is_active_chat(chat_id):
             await put_queue(
@@ -231,7 +230,7 @@ async def stream(
         file_path = result["filepath"]
         title = result["title"]
         duration_min = result["duration_min"]
-        
+
         if not file_path:
             raise AssistantErr(_["play_14"])
 
@@ -288,7 +287,7 @@ async def stream(
         title = (result["title"]).title()
         duration_min = result["dur"]
         status = True if video else None
-        
+
         if not file_path:
             raise AssistantErr(_["play_5"])
 
@@ -339,7 +338,6 @@ async def stream(
             db[chat_id][0]["mystic"] = run
             db[chat_id][0]["markup"] = "tg"
 
-
     elif streamtype == "live":
         link = result["link"]
         vidid = result["vidid"]
@@ -347,7 +345,7 @@ async def stream(
         thumbnail = result["thumb"]
         duration_min = "Live Track"
         status = True if video else None
-        
+
         if await is_active_chat(chat_id):
             await put_queue(
                 chat_id,
@@ -373,7 +371,6 @@ async def stream(
             n, file_path = await YouTube.video(link)
             if n == 0:
                 raise AssistantErr(_["str_3"])
-            
 
             if not file_path:
                 raise AssistantErr(_["play_14"])
@@ -413,15 +410,13 @@ async def stream(
             db[chat_id][0]["mystic"] = run
             db[chat_id][0]["markup"] = "tg"
 
-
     elif streamtype == "index":
         link = result
         title = "ɪɴᴅᴇx ᴏʀ ᴍ3ᴜ8 ʟɪɴᴋ"
         duration_min = "00:00"
-        
 
         if not link:
-             raise AssistantErr(_["play_14"])
+            raise AssistantErr(_["play_14"])
 
         if await is_active_chat(chat_id):
             await put_queue_index(

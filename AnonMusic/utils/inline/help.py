@@ -3,19 +3,18 @@
 # Included within AnonMusic framework.
 
 
-from typing import Union
 
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 from AnonMusic import app
-import config
 
-def help_pannel(_, START: Union[bool, int] = None):
-    first = [InlineKeyboardButton(text=_["CLOSE_BUTTON"], callback_data=f"close")]
+
+def help_pannel(_, START: bool | int | None = None):
+    first = [InlineKeyboardButton(text=_["CLOSE_BUTTON"], callback_data="close")]
     second = [
         InlineKeyboardButton(
             text=_["BACK_BUTTON"],
-            callback_data=f"settingsback_helper",
+            callback_data="settingsback_helper",
         ),
     ]
     mark = second if START else first
@@ -75,7 +74,7 @@ def help_back_markup(_):
             [
                 InlineKeyboardButton(
                     text=_["BACK_BUTTON"],
-                    callback_data=f"settings_back_helper",
+                    callback_data="settings_back_helper",
                 ),
             ]
         ]
@@ -93,4 +92,3 @@ def private_help_panel(_):
         ],
     ]
     return buttons
-    

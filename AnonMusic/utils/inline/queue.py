@@ -3,7 +3,6 @@
 # Included within AnonMusic framework.
 
 
-from typing import Union
 
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
@@ -13,8 +12,8 @@ def queue_markup(
     DURATION,
     CPLAY,
     videoid,
-    played: Union[bool, int] = None,
-    dur: Union[bool, int] = None,
+    played: bool | int | None = None,
+    dur: bool | int | None = None,
 ):
     not_dur = [
         [

@@ -32,7 +32,7 @@ async def reload_admin_cache(client, message: Message, _):
         else:
             saved = rel[message.chat.id]
             if saved > time.time():
-                left = get_readable_time((int(saved) - int(time.time())))
+                left = get_readable_time(int(saved) - int(time.time()))
                 return await message.reply_text(_["reload_1"].format(left))
         adminlist[message.chat.id] = []
         async for user in app.get_chat_members(
@@ -90,7 +90,9 @@ async def restartbot(client, message: Message, _):
             pass
     return await mystic.edit_text(_["reload_5"].format(app.mention))
 
+
 from asyncio import sleep
+
 
 @app.on_callback_query(filters.regex("close") & ~BANNED_USERS)
 async def close_menu(_, CallbackQuery):
@@ -104,6 +106,7 @@ async def close_menu(_, CallbackQuery):
         await msg.delete()
     except:
         pass
+
 
 @app.on_callback_query(filters.regex("stop_downloading") & ~BANNED_USERS)
 @ActualAdminCB

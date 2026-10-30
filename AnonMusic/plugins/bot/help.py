@@ -2,7 +2,7 @@
 # Open-sourced under MIT terms.
 # Included within AnonMusic framework.
 
-from typing import Union
+
 from pyrogram import filters, types
 from pyrogram.types import InlineKeyboardMarkup, Message
 
@@ -27,10 +27,11 @@ HELP_MAP = {
     "hb9": helpers.HELP_9,
 }
 
+
 @app.on_message(filters.command(["help"]) & filters.private & ~BANNED_USERS)
 @app.on_callback_query(filters.regex("settings_back_helper") & ~BANNED_USERS)
 async def helper_private(
-    client: app, update: Union[types.Message, types.CallbackQuery]
+    client: app, update: types.Message | types.CallbackQuery
 ):
     is_callback = isinstance(update, types.CallbackQuery)
     if is_callback:
@@ -53,22 +54,26 @@ async def helper_private(
             reply_markup=keyboard,
         )
 
+
 @app.on_message(filters.command(["help"]) & filters.group & ~BANNED_USERS)
 @LanguageStart
 async def help_com_group(client, message: Message, _):
     keyboard = private_help_panel(_)
     await message.reply_text(_["help_2"], reply_markup=InlineKeyboardMarkup(keyboard))
 
+
 @app.on_callback_query(filters.regex("help_callback") & ~BANNED_USERS)
 @languageCB
 async def helper_cb(client, CallbackQuery, _):
     cb = CallbackQuery.data.strip().split(None, 1)[1]
     keyboard = help_back_markup(_)
-    
+
     if cb == "hb7" and CallbackQuery.from_user.id not in SUDOERS:
-        await CallbackQuery.answer("This button is only for 'sudo' users.", show_alert=True)
+        await CallbackQuery.answer(
+            "This button is only for 'sudo' users.", show_alert=True
+        )
         return
-    
+
     help_text = HELP_MAP.get(cb)
     if help_text:
         await CallbackQuery.edit_message_text(help_text, reply_markup=keyboard)

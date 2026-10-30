@@ -22,7 +22,7 @@ from config import BANNED_USERS
 @AdminRightsCheck
 async def seek_comm(cli, message: Message, _, chat_id):
     if len(message.command) == 1:
-        return await message.reply_text(_["admin_20"])    
+        return await message.reply_text(_["admin_20"])
     query = message.text.split(None, 1)[1].strip()
     if not query.isnumeric():
         return await message.reply_text(_["admin_21"])
@@ -40,19 +40,23 @@ async def seek_comm(cli, message: Message, _, chat_id):
     if is_seek_back:
         seek_target = duration_played - duration_to_skip
         if seek_target <= 10:
-             return await message.reply_text(
-                text=_["admin_23"].format(seconds_to_min(duration_played), duration_total_str),
+            return await message.reply_text(
+                text=_["admin_23"].format(
+                    seconds_to_min(duration_played), duration_total_str
+                ),
                 reply_markup=close_markup(_),
-            )      
+            )
         to_seek = seek_target + 1
     else:
         seek_target = duration_played + duration_to_skip
         remaining_time = duration_seconds - seek_target
         if remaining_time <= 10:
-             return await message.reply_text(
-                text=_["admin_23"].format(seconds_to_min(duration_played), duration_total_str),
+            return await message.reply_text(
+                text=_["admin_23"].format(
+                    seconds_to_min(duration_played), duration_total_str
+                ),
                 reply_markup=close_markup(_),
-            )      
+            )
         to_seek = seek_target + 1
     mystic = await message.reply_text(_["admin_24"])
     if "vid_" in file_path:

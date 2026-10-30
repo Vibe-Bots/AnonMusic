@@ -4,7 +4,7 @@
 
 
 from pyrogram import filters
-from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 
 from AnonMusic import app
 from AnonMusic.utils.database import get_lang, set_lang
@@ -18,14 +18,16 @@ def languages_keyboard(_):
         InlineKeyboardButton(text=languages_present[i], callback_data=f"languages:{i}")
         for i in languages_present
     ]
-    keyboard_layout = [
-        buttons[i:i + 2] for i in range(0, len(buttons), 2)
-    ]
+    keyboard_layout = [buttons[i : i + 2] for i in range(0, len(buttons), 2)]
 
-    keyboard_layout.append([
-        InlineKeyboardButton(text=_["BACK_BUTTON"], callback_data="settingsback_helper"),
-        InlineKeyboardButton(text=_["CLOSE_BUTTON"], callback_data="close"),
-    ])
+    keyboard_layout.append(
+        [
+            InlineKeyboardButton(
+                text=_["BACK_BUTTON"], callback_data="settingsback_helper"
+            ),
+            InlineKeyboardButton(text=_["CLOSE_BUTTON"], callback_data="close"),
+        ]
+    )
     return InlineKeyboardMarkup(keyboard_layout)
 
 

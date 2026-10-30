@@ -6,7 +6,6 @@
 import asyncio
 import os
 import time
-from typing import Union
 
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Voice
 
@@ -38,7 +37,7 @@ class TeleAPI:
     async def get_link(self, message):
         return message.link
 
-    async def get_filename(self, file, audio: Union[bool, str] = None):
+    async def get_filename(self, file, audio: bool | str | None = None):
         try:
             file_name = file.file_name
             if file_name is None:
@@ -69,8 +68,8 @@ class TeleAPI:
 
     async def get_filepath(
         self,
-        audio: Union[bool, str] = None,
-        video: Union[bool, str] = None,
+        audio: bool | str | None = None,
+        video: bool | str | None = None,
     ):
         if audio:
             try:
@@ -136,23 +135,22 @@ class TeleAPI:
                     low = int(lower[counter])
                     high = int(higher[counter])
                     check = int(checker[counter])
-                    if low < percentage <= high:
-                        if high == check:
-                            try:
-                                await mystic.edit_text(
-                                    text=_["tg_1"].format(
-                                        app.mention,
-                                        total_size,
-                                        completed_size,
-                                        percentage[:5],
-                                        speed,
-                                        eta,
-                                    ),
-                                    reply_markup=upl,
-                                )
-                                checker[counter] = 100
-                            except:
-                                pass
+                    if low < percentage <= high and high == check:
+                        try:
+                            await mystic.edit_text(
+                                text=_["tg_1"].format(
+                                    app.mention,
+                                    total_size,
+                                    completed_size,
+                                    percentage[:5],
+                                    speed,
+                                    eta,
+                                ),
+                                reply_markup=upl,
+                            )
+                            checker[counter] = 100
+                        except:
+                            pass
 
             speed_counter[message.id] = time.time()
             try:

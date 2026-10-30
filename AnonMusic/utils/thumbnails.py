@@ -4,8 +4,8 @@
 
 
 import os
-import re
 import random
+import re
 
 import aiofiles
 import aiohttp
@@ -27,14 +27,18 @@ def truncate(text, max_len=30):
 
     return lines
 
+
 def random_color():
     return tuple(random.randint(0, 255) for _ in range(3))
+
 
 def circular_crop(img, size, border, color, scale=1.5):
     inner = size - 2 * border
     crop = int(size * scale)
     w, h = img.size
-    img = img.crop((w//2-crop//2, h//2-crop//2, w//2+crop//2, h//2+crop//2))
+    img = img.crop(
+        (w // 2 - crop // 2, h // 2 - crop // 2, w // 2 + crop // 2, h // 2 + crop // 2)
+    )
     img = img.resize((inner, inner), Image.LANCZOS)
 
     out = Image.new("RGBA", (size, size), color)
@@ -47,10 +51,12 @@ def circular_crop(img, size, border, color, scale=1.5):
     out.putalpha(outer)
     return out
 
+
 def draw_text(draw, pos, text, font, fill):
     x, y = pos
-    draw.text((x+2, y+2), text, font=font, fill="black")
+    draw.text((x + 2, y + 2), text, font=font, fill="black")
     draw.text(pos, text, font=font, fill=fill)
+
 
 def gen_gradient(size, start, end):
     base = Image.new("RGBA", size, start)
@@ -73,7 +79,7 @@ async def gen_thumb(videoid: str, thumb_size=(1280, 720)):
         views = data.get("viewCount", {}).get("short", "Unknown Views")
         channel = data.get("channel", {}).get("name", "Unknown Channel")
         thumb_url = data["thumbnails"][0]["url"].split("?")[0]
-        
+
         async with aiohttp.ClientSession() as session:
             async with session.get(thumb_url) as resp:
                 content = await resp.read()
@@ -111,7 +117,9 @@ async def gen_thumb(videoid: str, thumb_size=(1280, 720)):
 
         draw.line((x, y, x + color_len, y), fill=color, width=9)
         draw.line((x + color_len, y, x + 580, y), fill="white", width=8)
-        draw.ellipse((x + color_len - 10, y - 10, x + color_len + 10, y + 10), fill=color)
+        draw.ellipse(
+            (x + color_len - 10, y - 10, x + color_len + 10, y + 10), fill=color
+        )
 
         draw_text(draw, (x, 400), "00:00", font_small, "white")
         draw_text(draw, (1080, 400), duration, font_small, "white")

@@ -3,6 +3,8 @@
 # Included within AnonMusic framework.
 
 
+import sys
+
 from pyrogram import Client, errors
 from pyrogram.enums import ChatMemberStatus
 
@@ -13,7 +15,7 @@ from ..logging import LOGGER
 
 class Anony(Client):
     def __init__(self):
-        LOGGER(__name__).info(f"Starting AnonMusic Bot.")
+        LOGGER(__name__).info("Starting AnonMusic Bot.")
         super().__init__(
             name="AnonMusic",
             api_id=config.API_ID,
@@ -39,19 +41,19 @@ class Anony(Client):
             LOGGER(__name__).error(
                 "🚫 Bot has failed to access the log group/channel. Make sure that you have added your bot to your log group/channel."
             )
-            exit()
+            sys.exit()
         except Exception as ex:
             LOGGER(__name__).error(
                 f"🚫 Bot has failed to access the log group/channel.\n  Reason : {type(ex).__name__}."
             )
-            exit()
+            sys.exit()
 
         a = await self.get_chat_member(config.LOGGER_ID, self.id)
         if a.status != ChatMemberStatus.ADMINISTRATOR:
             LOGGER(__name__).error(
                 "🚫 Please promote your bot as an admin in your log group/channel."
             )
-            exit()
+            sys.exit()
         LOGGER(__name__).info(f"Music Bot Started as {self.name}")
 
     async def stop(self):

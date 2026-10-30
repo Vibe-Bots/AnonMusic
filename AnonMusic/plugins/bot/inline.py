@@ -2,8 +2,12 @@
 # Open-sourced under MIT terms.
 # Included within AnonMusic framework.
 
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, InlineQueryResultPhoto
 from py_yt import VideosSearch
+from pyrogram.types import (
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    InlineQueryResultPhoto,
+)
 
 from AnonMusic import app
 from AnonMusic.utils.inlinequery import answer
@@ -13,20 +17,20 @@ from config import BANNED_USERS
 @app.on_inline_query(~BANNED_USERS)
 async def inline_query_handler(client, query):
     text = query.query.strip()
-    
+
     if not text:
         try:
             await client.answer_inline_query(query.id, results=answer, cache_time=10)
         except:
             pass
         return
-    
+
     search = VideosSearch(text, limit=15)
     results = (await search.next()).get("result", [])
-    
+
     if not results:
         return
-    
+
     answers = []
     for result in results[:15]:
         title = result["title"].title()
@@ -37,13 +41,13 @@ async def inline_query_handler(client, query):
         channel = result["channel"]["name"]
         video_link = result["link"]
         published = result["publishedTime"]
-        
+
         description = f"{views} | {duration} mins | {channel} | {published}"
-        
-        buttons = InlineKeyboardMarkup([
-            [InlineKeyboardButton("📺 YouTube", url=video_link)]
-        ])
-        
+
+        buttons = InlineKeyboardMarkup(
+            [[InlineKeyboardButton("📺 YouTube", url=video_link)]]
+        )
+
         caption = f"""
 ❄ <b>Title:</b> <a href={video_link}>{title}</a>
 
@@ -53,7 +57,7 @@ async def inline_query_handler(client, query):
 ⏰ <b>Published:</b> {published}
 
 <u><b>➻ Inline search by {app.name}</b></u>"""
-        
+
         answers.append(
             InlineQueryResultPhoto(
                 photo_url=thumbnail,
@@ -64,7 +68,7 @@ async def inline_query_handler(client, query):
                 reply_markup=buttons,
             )
         )
-    
+
     try:
         await client.answer_inline_query(query.id, results=answers, cache_time=10)
     except:

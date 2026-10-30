@@ -86,7 +86,7 @@ async def executor(client: app, message: Message):
                 [
                     InlineKeyboardButton(
                         text="⏳",
-                        callback_data=f"runtime {t2-t1} Seconds",
+                        callback_data=f"runtime {t2 - t1} Seconds",
                     )
                 ]
             ]
@@ -106,7 +106,7 @@ async def executor(client: app, message: Message):
                 [
                     InlineKeyboardButton(
                         text="⏳",
-                        callback_data=f"runtime {round(t2-t1, 3)} Seconds",
+                        callback_data=f"runtime {round(t2 - t1, 3)} Seconds",
                     ),
                     InlineKeyboardButton(
                         text="🗑",
@@ -128,7 +128,7 @@ async def runtime_func_cq(_, cq):
 async def forceclose_command(_, CallbackQuery):
     callback_data = CallbackQuery.data.strip()
     callback_request = callback_data.split(None, 1)[1]
-    query, user_id = callback_request.split("|")
+    _query, user_id = callback_request.split("|")
     if CallbackQuery.from_user.id != int(user_id):
         try:
             return await CallbackQuery.answer(

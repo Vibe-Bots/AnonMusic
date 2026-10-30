@@ -4,6 +4,7 @@
 
 
 import asyncio
+
 from pyrogram.enums import ChatMemberStatus
 from pyrogram.errors import (
     ChatAdminRequired,
@@ -32,7 +33,7 @@ links = {}
 
 
 def PlayWrapper(command):
-    async def wrapper(client, message:Message):
+    async def wrapper(client, message: Message):
         language = await get_lang(message.chat.id)
         _ = get_string(language)
         if message.sender_chat:
@@ -46,7 +47,7 @@ def PlayWrapper(command):
                     ]
                 ]
             )
-            return await message.reply_text(_["general_3"], reply_markup=upl)          
+            return await message.reply_text(_["general_3"], reply_markup=upl)
 
         if await is_maintenance() is False:
             if message.from_user.id not in SUDOERS:
@@ -96,14 +97,13 @@ def PlayWrapper(command):
             channel = None
         playmode = await get_playmode(message.chat.id)
         playty = await get_playtype(message.chat.id)
-        if playty != "Everyone":
-            if message.from_user.id not in SUDOERS:
-                admins = adminlist.get(message.chat.id)
-                if not admins:
-                    return await message.reply_text(_["admin_13"])
-                else:
-                    if message.from_user.id not in admins:
-                        return await message.reply_text(_["play_4"])
+        if playty != "Everyone" and message.from_user.id not in SUDOERS:
+            admins = adminlist.get(message.chat.id)
+            if not admins:
+                return await message.reply_text(_["admin_13"])
+            else:
+                if message.from_user.id not in admins:
+                    return await message.reply_text(_["play_4"])
         if message.command[0][0] == "v":
             video = True
         else:
@@ -187,7 +187,7 @@ def PlayWrapper(command):
                     await userbot.resolve_peer(chat_id)
                 except:
                     pass
-        
+
         return await command(
             client,
             message,

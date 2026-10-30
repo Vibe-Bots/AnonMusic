@@ -6,12 +6,10 @@
 import asyncio
 import os
 from datetime import datetime, timedelta
-from typing import Union
 
 from ntgcalls import ConnectionNotFound, TelegramServerError
 from pyrogram import Client
 from pyrogram.types import InlineKeyboardMarkup
-
 from pytgcalls import PyTgCalls, exceptions, types
 from pytgcalls.pytgcalls_session import PyTgCallsSession
 
@@ -40,10 +38,12 @@ from strings import get_string
 autoend = {}
 counter = {}
 
+
 async def _clear_(chat_id: int):
     db[chat_id] = []
     await remove_active_video_chat(chat_id)
     await remove_active_chat(chat_id)
+
 
 class Call(PyTgCalls):
     def __init__(self):
@@ -240,8 +240,8 @@ class Call(PyTgCalls):
         self,
         chat_id: int,
         link: str,
-        video: Union[bool, str] = None,
-        image: Union[bool, str] = None,
+        video: bool | str | None = None,
+        image: bool | str | None = None,
     ):
         assistant = await group_assistant(self, chat_id)
         stream = self._build_stream(link, video=bool(video))
@@ -273,8 +273,8 @@ class Call(PyTgCalls):
         chat_id: int,
         original_chat_id: int,
         link,
-        video: Union[bool, str] = None,
-        image: Union[bool, str] = None,
+        video: bool | str | None = None,
+        image: bool | str | None = None,
     ):
         assistant = await group_assistant(self, chat_id)
         language = await get_lang(chat_id)
@@ -335,7 +335,7 @@ class Call(PyTgCalls):
             db[chat_id][0]["seconds"] = check[0]["old_second"]
             db[chat_id][0]["speed_path"] = None
             db[chat_id][0]["speed"] = 1.0
-        video = True if str(streamtype) == "video" else False
+        video = str(streamtype) == "video"
         if "live_" in queued:
             n, link = await YouTube.video(videoid, True)
             if n == 0:
@@ -369,7 +369,7 @@ class Call(PyTgCalls):
         elif "vid_" in queued:
             mystic = await app.send_message(original_chat_id, _["call_7"])
             try:
-                file_path, direct = await YouTube.download(
+                file_path, _direct = await YouTube.download(
                     videoid,
                     mystic,
                     videoid=True,
@@ -513,6 +513,7 @@ class Call(PyTgCalls):
         ]:
             if not string:
                 continue
+
             @client.on_update()
             async def _update_handler(_, update: types.Update, _client=client):
                 if isinstance(update, types.StreamEnded):
@@ -525,5 +526,6 @@ class Call(PyTgCalls):
                         types.ChatUpdate.Status.CLOSED_VOICE_CHAT,
                     ]:
                         await self.stop_stream(update.chat_id)
+
 
 Anony = Call()

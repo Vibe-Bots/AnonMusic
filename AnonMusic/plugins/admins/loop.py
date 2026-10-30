@@ -16,7 +16,7 @@ from config import BANNED_USERS
 @app.on_message(filters.command(["loop", "cloop"]) & filters.group & ~BANNED_USERS)
 @AdminRightsCheck
 async def loop_command(cli, message: Message, _, chat_id):
-    usage = _["admin_17"]  
+    usage = _["admin_17"]
     if len(message.command) != 2:
         return await message.reply_text(usage)
     user_input = message.text.split(None, 1)[1].strip()
@@ -28,8 +28,7 @@ async def loop_command(cli, message: Message, _, chat_id):
                 new_loop_count = current_loop + requested_loop
             else:
                 new_loop_count = requested_loop
-            if new_loop_count > 10:
-                new_loop_count = 10
+            new_loop_count = min(new_loop_count, 10)
             await set_loop(chat_id, new_loop_count)
             return await message.reply_text(
                 text=_["admin_18"].format(new_loop_count, message.from_user.mention),

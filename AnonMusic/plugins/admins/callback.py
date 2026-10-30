@@ -6,7 +6,7 @@
 import asyncio
 
 from pyrogram import filters
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup,CallbackQuery
+from pyrogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup
 
 from AnonMusic import YouTube, app
 from AnonMusic.core.call import Anony
@@ -34,9 +34,9 @@ from config import (
     TELEGRAM_AUDIO_URL,
     TELEGRAM_VIDEO_URL,
     adminlist,
+    autoclean,
     confirmer,
     votemode,
-    autoclean,
 )
 from strings import get_string
 
@@ -46,7 +46,7 @@ upvoters = {}
 
 @app.on_callback_query(filters.regex("ADMIN") & ~BANNED_USERS)
 @languageCB
-async def del_back_playlist(client, CallbackQuery:CallbackQuery, _):
+async def del_back_playlist(client, CallbackQuery: CallbackQuery, _):
     callback_data = CallbackQuery.data.strip()
     callback_request = callback_data.split(None, 1)[1]
     command, chat = callback_request.split("|")
@@ -90,7 +90,7 @@ async def del_back_playlist(client, CallbackQuery:CallbackQuery, _):
                 exists = confirmer[chat_id][CallbackQuery.message.id]
                 current = db[chat_id][0]
             except:
-                return await CallbackQuery.edit_message_text(f"ғᴀɪʟᴇᴅ.")
+                return await CallbackQuery.edit_message_text("ғᴀɪʟᴇᴅ.")
             try:
                 if current["vidid"] != exists["vidid"]:
                     return await CallbackQuery.edit_message_text(_["admin_35"])
@@ -126,16 +126,15 @@ async def del_back_playlist(client, CallbackQuery:CallbackQuery, _):
             return await CallbackQuery.edit_message_reply_markup(reply_markup=upl)
     else:
         is_non_admin = await is_nonadmin_chat(CallbackQuery.message.chat.id)
-        if not is_non_admin:
-            if CallbackQuery.from_user.id not in SUDOERS:
-                admins = adminlist.get(CallbackQuery.message.chat.id)
-                if not admins:
-                    return await CallbackQuery.answer(_["admin_13"], show_alert=True)
-                else:
-                    if CallbackQuery.from_user.id not in admins:
-                        return await CallbackQuery.answer(
-                            _["admin_14"], show_alert=True
-                        )
+        if not is_non_admin and CallbackQuery.from_user.id not in SUDOERS:
+            admins = adminlist.get(CallbackQuery.message.chat.id)
+            if not admins:
+                return await CallbackQuery.answer(_["admin_13"], show_alert=True)
+            else:
+                if CallbackQuery.from_user.id not in admins:
+                    return await CallbackQuery.answer(
+                        _["admin_14"], show_alert=True
+                    )
     if command == "Pause":
         if not await is_music_playing(chat_id):
             return await CallbackQuery.answer(_["admin_1"], show_alert=True)
@@ -206,7 +205,7 @@ async def del_back_playlist(client, CallbackQuery:CallbackQuery, _):
         queued = check[0]["file"]
         title = (check[0]["title"]).title()
         user = check[0]["by"]
-        user_id = check[0]["user_id"]
+        check[0]["user_id"]
         duration = check[0]["dur"]
         streamtype = check[0]["streamtype"]
         videoid = check[0]["vidid"]
@@ -254,7 +253,7 @@ async def del_back_playlist(client, CallbackQuery:CallbackQuery, _):
                 _["call_7"], disable_web_page_preview=True
             )
             try:
-                file_path, direct = await YouTube.download(
+                file_path, _direct = await YouTube.download(
                     videoid,
                     mystic,
                     videoid=True,
@@ -303,9 +302,7 @@ async def del_back_playlist(client, CallbackQuery:CallbackQuery, _):
             db[chat_id][0]["markup"] = "tg"
             await CallbackQuery.edit_message_text(txt, reply_markup=close_markup(_))
         else:
-            if videoid == "telegram":
-                image = None
-            elif videoid == "soundcloud":
+            if videoid == "telegram" or videoid == "soundcloud":
                 image = None
             else:
                 try:

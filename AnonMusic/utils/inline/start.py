@@ -36,5 +36,5 @@ def private_panel(_):
         ],
         [InlineKeyboardButton(text=_["S_B_10"], url=config.UPSTREAM_REPO)],
     ]
-    
+
     return buttons

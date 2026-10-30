@@ -6,8 +6,9 @@
 from AnonMusic import app
 from AnonMusic.misc import SUDOERS
 from AnonMusic.utils.database import get_lang, is_maintenance
-from strings import get_string
 from config import SUPPORT_CHAT
+from strings import get_string
+
 
 def language(mystic):
     async def wrapper(_, message, **kwargs):

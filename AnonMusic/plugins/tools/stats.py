@@ -7,12 +7,12 @@ import platform
 from sys import version as pyver
 
 import psutil
+from ntgcalls import __version__ as ntgver
 from pyrogram import __version__ as pyrover
 from pyrogram import filters
 from pyrogram.errors import MessageIdInvalid
-from pyrogram.types import InputMediaPhoto, Message, CallbackQuery
+from pyrogram.types import CallbackQuery, InputMediaPhoto, Message
 from pytgcalls.__version__ import __version__ as pytgver
-from ntgcalls import __version__ as ntgver
 
 import config
 from AnonMusic import app
@@ -30,18 +30,20 @@ from AnonMusic.utils.decorators.language import language, languageCB
 from AnonMusic.utils.inline.stats import back_stats_buttons, stats_buttons
 from config import BANNED_USERS
 
-async def answer_callback(query: CallbackQuery, text: str = None, alert: bool = False):
+
+async def answer_callback(query: CallbackQuery, text: str | None = None, alert: bool = False):
     try:
         await query.answer(text, show_alert=alert)
     except:
         pass
+
 
 @app.on_message(filters.command(["stats", "gstats"]) & filters.group & ~BANNED_USERS)
 @language
 async def stats_global(client, message: Message, _):
     is_sudo = message.from_user.id in SUDOERS
     markup = stats_buttons(_, is_sudo)
-    
+
     await message.reply_photo(
         photo=config.STATS_IMG_URL,
         caption=_["gstats_2"].format(app.mention),
@@ -55,7 +57,7 @@ async def home_stats(client, CallbackQuery, _):
     await answer_callback(CallbackQuery)
     is_sudo = CallbackQuery.from_user.id in SUDOERS
     markup = stats_buttons(_, is_sudo)
-    
+
     await CallbackQuery.edit_message_text(
         text=_["gstats_2"].format(app.mention),
         reply_markup=markup,
@@ -92,20 +94,22 @@ async def overall_stats(client, CallbackQuery, _):
         await CallbackQuery.message.reply_photo(
             photo=config.STATS_IMG_URL, caption=text, reply_markup=markup
         )
+
+
 @app.on_callback_query(filters.regex("bot_stats_sudo"))
 @languageCB
 async def bot_stats(client, CallbackQuery, _):
     if CallbackQuery.from_user.id not in SUDOERS:
-        return await answer_callback(CallbackQuery, _["gstats_4"], alert=True)   
+        return await answer_callback(CallbackQuery, _["gstats_4"], alert=True)
     await answer_callback(CallbackQuery)
-    markup = back_stats_buttons(_)    
+    markup = back_stats_buttons(_)
     try:
         await CallbackQuery.edit_message_text(_["gstats_1"].format(app.mention))
     except:
         pass
     p_core = psutil.cpu_count(logical=False)
     t_core = psutil.cpu_count(logical=True)
-    ram = str(round(psutil.virtual_memory().total / (1024.0**3))) + " ɢʙ"  
+    ram = str(round(psutil.virtual_memory().total / (1024.0**3))) + " ɢʙ"
     try:
         cpu_freq = psutil.cpu_freq().current
         if cpu_freq >= 1000:
@@ -156,7 +160,7 @@ async def bot_stats(client, CallbackQuery, _):
         collections,
         objects,
     )
-    media = InputMediaPhoto(media=config.STATS_IMG_URL, caption=text)  
+    media = InputMediaPhoto(media=config.STATS_IMG_URL, caption=text)
     try:
         await CallbackQuery.edit_message_media(media=media, reply_markup=markup)
     except MessageIdInvalid:

@@ -3,6 +3,8 @@
 # Included within AnonMusic framework.
 
 
+import sys
+
 from motor.motor_asyncio import AsyncIOMotorClient
 
 from config import MONGO_DB_URI
@@ -16,4 +18,4 @@ try:
     LOGGER(__name__).info("Successfully fetched database.")
 except:
     LOGGER(__name__).error("🚫 Failed to connect to your Mongo Database.")
-    exit()
+    sys.exit()

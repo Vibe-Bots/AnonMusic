@@ -28,9 +28,8 @@ from config import BANNED_USERS
 @app.on_message(filters.command(["gban", "globalban"]) & SUDOERS)
 @language
 async def global_ban(client, message: Message, _):
-    if not message.reply_to_message:
-        if len(message.command) != 2:
-            return await message.reply_text(_["general_1"])
+    if not message.reply_to_message and len(message.command) != 2:
+        return await message.reply_text(_["general_1"])
     user = await extract_user(message)
     if user.id == message.from_user.id:
         return await message.reply_text(_["gban_1"])
@@ -76,9 +75,8 @@ async def global_ban(client, message: Message, _):
 @app.on_message(filters.command(["ungban"]) & SUDOERS)
 @language
 async def global_un(client, message: Message, _):
-    if not message.reply_to_message:
-        if len(message.command) != 2:
-            return await message.reply_text(_["general_1"])
+    if not message.reply_to_message and len(message.command) != 2:
+        return await message.reply_text(_["general_1"])
     user = await extract_user(message)
     is_gbanned = await is_banned_user(user.id)
     if not is_gbanned:

@@ -4,7 +4,6 @@
 
 
 import asyncio
-from typing import Union
 
 from AnonMusic.misc import db
 from AnonMusic.utils.formatters import check_duration, seconds_to_min
@@ -21,7 +20,7 @@ async def put_queue(
     vidid,
     user_id,
     stream,
-    forceplay: Union[bool, str] = None,
+    forceplay: bool | str | None = None,
 ):
     title = title.title()
     try:
@@ -61,7 +60,7 @@ async def put_queue_index(
     user,
     vidid,
     stream,
-    forceplay: Union[bool, str] = None,
+    forceplay: bool | str | None = None,
 ):
     if "20.212.146.162" in vidid:
         try:

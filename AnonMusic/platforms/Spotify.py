@@ -6,8 +6,8 @@
 import re
 
 import spotipy
-from spotipy.oauth2 import SpotifyClientCredentials
 from py_yt import VideosSearch
+from spotipy.oauth2 import SpotifyClientCredentials
 
 import config
 
@@ -28,16 +28,13 @@ class SpotifyAPI:
             self.spotify = None
 
     async def valid(self, link: str):
-        if re.search(self.regex, link):
-            return True
-        else:
-            return False
+        return bool(re.search(self.regex, link))
 
     async def track(self, link: str):
         track = self.spotify.track(link)
         info = track["name"]
         for artist in track["artists"]:
-            fetched = f' {artist["name"]}'
+            fetched = f" {artist['name']}"
             if "Various Artists" not in fetched:
                 info += fetched
         results = VideosSearch(info, limit=1)
@@ -64,7 +61,7 @@ class SpotifyAPI:
             music_track = item["track"]
             info = music_track["name"]
             for artist in music_track["artists"]:
-                fetched = f' {artist["name"]}'
+                fetched = f" {artist['name']}"
                 if "Various Artists" not in fetched:
                     info += fetched
             results.append(info)
@@ -77,7 +74,7 @@ class SpotifyAPI:
         for item in album["tracks"]["items"]:
             info = item["name"]
             for artist in item["artists"]:
-                fetched = f' {artist["name"]}'
+                fetched = f" {artist['name']}"
                 if "Various Artists" not in fetched:
                     info += fetched
             results.append(info)
@@ -95,7 +92,7 @@ class SpotifyAPI:
         for item in artisttoptracks["tracks"]:
             info = item["name"]
             for artist in item["artists"]:
-                fetched = f' {artist["name"]}'
+                fetched = f" {artist['name']}"
                 if "Various Artists" not in fetched:
                     info += fetched
             results.append(info)

@@ -1,10 +1,12 @@
 import re
 import sys
 from os import getenv
+
 from dotenv import load_dotenv
 from pyrogram import filters
 
 load_dotenv()
+
 
 def validate_env_var(var_name, required=True, cast_type=str, default=None):
     value = getenv(var_name, default)
@@ -14,7 +16,9 @@ def validate_env_var(var_name, required=True, cast_type=str, default=None):
         try:
             return cast_type(value)
         except ValueError:
-            sys.exit(f"[ERROR] - Environment variable '{var_name}' must be of type {cast_type.__name__}")
+            sys.exit(
+                f"[ERROR] - Environment variable '{var_name}' must be of type {cast_type.__name__}"
+            )
     return value
 
 
@@ -44,20 +48,35 @@ SUPPORT_CHANNEL = getenv("SUPPORT_CHANNEL", "https://t.me/VibeBots")
 SUPPORT_CHAT = getenv("SUPPORT_CHAT", "https://t.me/VibeBotsSupport")
 
 AUTO_END_VC_STREAM = getenv("AUTO_END_VC_STREAM", "false").lower() in ("true", "1")
-AUTO_LEAVING_ASSISTANT = getenv("AUTO_LEAVING_ASSISTANT", "false").lower() in ("true", "1")
-ASSISTANT_LEAVE_TIME = validate_env_var("ASSISTANT_LEAVE_TIME", cast_type=int, default=6400)
+AUTO_LEAVING_ASSISTANT = getenv("AUTO_LEAVING_ASSISTANT", "false").lower() in (
+    "true",
+    "1",
+)
+ASSISTANT_LEAVE_TIME = validate_env_var(
+    "ASSISTANT_LEAVE_TIME", cast_type=int, default=6400
+)
 
 SPOTIFY_CLIENT_ID = getenv("SPOTIFY_CLIENT_ID", "22b6125bfe224587b722d6815002db2b")
-SPOTIFY_CLIENT_SECRET = getenv("SPOTIFY_CLIENT_SECRET", "c9c63c6fbf2f467c8bc68624851e9773")
+SPOTIFY_CLIENT_SECRET = getenv(
+    "SPOTIFY_CLIENT_SECRET", "c9c63c6fbf2f467c8bc68624851e9773"
+)
 
-PLAYLIST_FETCH_LIMIT = validate_env_var("PLAYLIST_FETCH_LIMIT", cast_type=int, default=25)
+PLAYLIST_FETCH_LIMIT = validate_env_var(
+    "PLAYLIST_FETCH_LIMIT", cast_type=int, default=25
+)
 
 AUTH_LIMIT = validate_env_var("AUTH_LIMIT", cast_type=int, default=15)
 
-TG_AUDIO_FILESIZE_LIMIT = validate_env_var("TG_AUDIO_FILESIZE_LIMIT", cast_type=int, default=204857600)
-TG_VIDEO_FILESIZE_LIMIT = validate_env_var("TG_VIDEO_FILESIZE_LIMIT", cast_type=int, default=2071824)
+TG_AUDIO_FILESIZE_LIMIT = validate_env_var(
+    "TG_AUDIO_FILESIZE_LIMIT", cast_type=int, default=204857600
+)
+TG_VIDEO_FILESIZE_LIMIT = validate_env_var(
+    "TG_VIDEO_FILESIZE_LIMIT", cast_type=int, default=2071824
+)
 
-PRIVATE_BOT_MODE_MEM = validate_env_var("PRIVATE_BOT_MODE_MEM", cast_type=int, default=1)
+PRIVATE_BOT_MODE_MEM = validate_env_var(
+    "PRIVATE_BOT_MODE_MEM", cast_type=int, default=1
+)
 
 CACHE_DURATION = validate_env_var("CACHE_DURATION", cast_type=int, default=86400)
 CACHE_SLEEP = validate_env_var("CACHE_SLEEP", cast_type=int, default=3600)
@@ -98,8 +117,14 @@ def time_to_seconds(time):
     stringt = str(time)
     return sum(int(x) * 60**i for i, x in enumerate(reversed(stringt.split(":"))))
 
+
 DURATION_LIMIT = time_to_seconds(f"{DURATION_LIMIT_MIN}:00")
 
-for url_name, url in [("SUPPORT_CHANNEL", SUPPORT_CHANNEL), ("SUPPORT_CHAT", SUPPORT_CHAT)]:
+for url_name, url in [
+    ("SUPPORT_CHANNEL", SUPPORT_CHANNEL),
+    ("SUPPORT_CHAT", SUPPORT_CHAT),
+]:
     if not re.match(r"^(?:http|https)://", url):
-        sys.exit(f"[ERROR] - {url_name} is invalid. It must start with http:// or https://")
+        sys.exit(
+            f"[ERROR] - {url_name} is invalid. It must start with http:// or https://"
+        )
