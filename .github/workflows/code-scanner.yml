@@ -1,0 +1,139 @@
+
+name: Code Scanner and Fixer
+
+on:
+  push:
+    branches: [Master]
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * 1'
+
+permissions:
+  contents: write
+
+jobs:
+  scan-and-fix:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Install System Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            git ffmpeg curl
+          sudo rm -rf /var/lib/apt/lists/*
+
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      - name: Install uv
+        run: |
+          python -m pip install --upgrade pip
+          pip install uv
+          uv --version
+
+      - name: Install Project Dependencies
+        run: |
+          if [ -f requirements.txt ]; then
+            uv pip install --system -r requirements.txt
+          else
+            echo "::error::requirements.txt not found!"
+            exit 1
+          fi
+
+      - name: Install Ruff
+        run: uv tool install ruff
+
+      - name: Ruff Format
+        run: ruff format .
+
+      - name: Ruff Import Sorting
+        run: ruff check . --select I --fix --exit-zero
+
+      - name: Ruff Auto Fix
+        run: ruff check . --fix --unsafe-fixes --exit-zero
+
+      - name: Python Syntax Check
+        shell: bash
+        run: |
+          fail=0
+
+          while IFS= read -r -d '' file; do
+            python -m py_compile "$file" || fail=1
+          done < <(
+            find . \
+              -type d \( -name .git -o -name .venv -o -name venv \) -prune \
+              -o -type f -name "*.py" -print0
+          )
+
+          if [ "$fail" -eq 1 ]; then
+            echo "::error::Python syntax check failed!"
+            exit 1
+          fi
+
+          echo "All Python files compiled successfully."
+
+      - name: Validate Dockerfile
+        run: |
+          test -f Dockerfile || {
+            echo "::error::Dockerfile not found!"
+            exit 1
+          }
+
+          test -f start || {
+            echo "::error::start file not found!"
+            exit 1
+          }
+
+      - name: Dependency Security Audit
+        continue-on-error: true
+        run: |
+          uvx pip-audit -r requirements.txt
+
+      - name: Clean Python Cache
+        run: |
+          find . -type d -name "__pycache__" \
+            -not -path "./.venv/*" \
+            -prune -exec rm -rf {} + 2>/dev/null || true
+
+          find . -type f -name "*.pyc" -delete
+
+          touch .gitignore
+
+          for pattern in "__pycache__/" "*.pyc" ".venv/" "venv/"; do
+            grep -qxF "$pattern" .gitignore || echo "$pattern" >> .gitignore
+          done
+
+      - name: Verify Docker Build
+        run: |
+          docker build -t code-scanner-test .
+
+      - name: Direct Commit and Push
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email \
+            "41898282+github-actions[bot]@users.noreply.github.com"
+
+          BRANCH="${GITHUB_REF_NAME}"
+
+          if [ -n "$(git status --porcelain)" ]; then
+            git add -A
+
+            git commit -m \
+              "chore: automated Python 3.13 code cleanup"
+
+            git push origin HEAD:"$BRANCH"
+          else
+            echo "No changes detected."
+          fi
