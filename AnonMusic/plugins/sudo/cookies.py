@@ -41,7 +41,13 @@ async def update_cookies(client, message: Message):
     if len(message.command) > 1:
         url = message.command[1]
         if not (
-            url.startswith(("https://gist.github.com/", "https://batbin.me/", "https://pastebin.com/"))
+            url.startswith(
+                (
+                    "https://gist.github.com/",
+                    "https://batbin.me/",
+                    "https://pastebin.com/",
+                )
+            )
         ):
             return await message.reply_text(
                 "🚫 ɪɴᴠᴀʟɪᴅ ᴄᴏᴏᴋɪᴇs ᴜʀʟ.\n ᴏɴʟʏ ɢɪsᴛ, ᴘᴀsᴛᴇʙɪɴ, ᴀɴᴅ ʙᴀᴛʙɪɴ ʟɪɴᴋs ᴀʀᴇ sᴜᴘᴘᴏʀᴛᴇᴅ.",

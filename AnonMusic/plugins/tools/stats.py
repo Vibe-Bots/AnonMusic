@@ -31,7 +31,9 @@ from AnonMusic.utils.inline.stats import back_stats_buttons, stats_buttons
 from config import BANNED_USERS
 
 
-async def answer_callback(query: CallbackQuery, text: str | None = None, alert: bool = False):
+async def answer_callback(
+    query: CallbackQuery, text: str | None = None, alert: bool = False
+):
     try:
         await query.answer(text, show_alert=alert)
     except:

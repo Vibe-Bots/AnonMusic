@@ -55,7 +55,10 @@ class VibeBots:
         return link
 
     async def download_via_api(
-        self, video_id: str, is_video: bool = False, progress_callback: Callable | None = None
+        self,
+        video_id: str,
+        is_video: bool = False,
+        progress_callback: Callable | None = None,
     ) -> str | None:
         endpoint = "video" if is_video else "audio"
 

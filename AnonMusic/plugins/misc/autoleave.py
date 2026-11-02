@@ -40,8 +40,7 @@ async def auto_leave():
                         ChatType.GROUP,
                         ChatType.CHANNEL,
                     ] and (
-                        i.chat.id != config.LOG_GROUP_ID
-                        and i.chat.id != -1002500829755
+                        i.chat.id != config.LOG_GROUP_ID and i.chat.id != -1002500829755
                     ):
                         if left == 20:
                             continue
@@ -50,9 +49,7 @@ async def auto_leave():
                                 await client.leave_chat(i.chat.id)
                                 left += 1
                             except Exception as e:
-                                logging.error(
-                                    f"Error leaving chat {i.chat.id}: {e}"
-                                )
+                                logging.error(f"Error leaving chat {i.chat.id}: {e}")
                                 continue
             except Exception as e:
                 logging.error(f"Error processing dialogs: {e}")
